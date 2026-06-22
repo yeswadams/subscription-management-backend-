@@ -1,23 +1,25 @@
 import mongoose from "mongoose";
 import { DB_URI, NODE_ENV } from "../config/env.ts";
 
-interface CustomConnectOptions extends mongoose.ConnectOptions {
-    signal: AbortSignal;
-}
+// interface CustomConnectOptions extends mongoose.ConnectOptions {
+//     signal: AbortSignal;
+// }
 
 const connectToDatabase = async () => {
-  const controller = new AbortController();
-  const {signal} = controller;
+  // const controller = new AbortController();
+  // const {signal} = controller;
 
   try {
     if (DB_URI) {
-      await mongoose.connect(DB_URI, { signal } as CustomConnectOptions);
-      console.log("Connected to MongoDB");
+      await mongoose.connect(DB_URI);
+      console.log(`Connected to database in ${NODE_ENV} mode`);
     } else {
-      console.error("Missing DB_URI");
+      throw new Error("Missing DB_URI env variabke inside .env file");
     }
-    console.log("Connected to MongoDB");
   } catch (error) {
-    console.error(error);
+    console.error("Error Connecting to database", error);
+    process.exit(1); // Exit with failure
   }
 };
+
+export default connectToDatabase;
